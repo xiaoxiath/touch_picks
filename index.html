@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" /> 
+    <title>Picks</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        #picks_canvas {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        #board {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            border: 1px solid #C4C4C4;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+        .picks {
+            position: absolute;
+        }
+        .start-btn {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            height: 50px;
+            width: 200px;
+            margin-top: -15px;
+            margin-left: -100px;
+            border-radius: 5px;
+            text-align: center;
+            line-height: 50px;
+            background-color: rgb(3, 185, 255);
+            color: white;
+            text-decoration: none;
+        }
+        .time {
+            margin-bottom: 10px;
+        }
+        .label span {
+            padding: 2px 4px;
+            margin-right: 5px;
+            background: rgb(3, 185, 255);
+            color: white;
+            border-radius: 5px;
+        }
+        .picks-level-0 {
+            -webkit-animation: bounceOut 0.9s 0 ease both;
+        }
+        .picks-level-1 {
+            -webkit-animation: bounceOut 0.8s 0 ease both;
+        }
+        .picks-level-2 {
+            -webkit-animation: bounceOut 0.7s 0 ease both;
+        }
+        .picks-level-3 {
+            -webkit-animation: bounceOut 0.6s 0 ease both;
+        }
+        .hit {
+            -webkit-animation: hit 0.2s 0s ease both;
+        }
+        @-webkit-keyframes bounceOut {
+            0% {
+                -webkit-transform: scale(1)
+            }
+            25% {
+                -webkit-transform: scale(.95)
+            }
+            50% {
+                opacity: 1;
+                -webkit-transform: scale(1.1)
+            }
+            99% {
+                opacity: 0;
+                -webkit-transform: scale(.3)
+            }
+            100% {
+                -webkit-transform: scale(0)
+            }
+        }
+        @-webkit-keyframes hit {
+            0% {
+                background-color: white;
+            }
+            50% {
+                background-color: rgb(204, 2, 255);
+            }
+            100% {
+                background-color: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="board">
+        <div class="time label">计时：<span>0.00</span>秒</div>
+        <div class="score label">得分：<span>0</span>分</div>
+    </div>
+    <div id="picks_canvas">
+        <a href="#" class="start-btn">开始游戏</a>
+    </div>
+    <script src="js/zepto.min.js"></script>
+    <script>
+        function Picks(opts) {
+            this.$content = opts.content;
+            this.$board = opts.board;
+            this.$time = opts.time;
+            this.$score = opts.score;
+            this.picksOpts = {
+                width: 50,
+                height: 50
+            };
+            this.intervalTime = [1000, 900, 800, 700];
+            this.evaluation = ['弱爆了！', '一般般呀', '屌炸天！'];
+            this.gameover = false;
+            this.total = 0;
+            this.time = 0;
+            this.level = 0;
+            this.score = 0;
+            this.timer = null;
+            this.interval = null;
+        };
+
+        Picks.prototype = {
+            constructor: Picks,
+            init: function () {
+                this._reset();
+                this._addPicks(this.level);
+                this._events();
+                this._gameStart();
+            },
+            _createPicks: function (level) {
+                var $picks = $('<img src="picks.png" class="picks"></div>'),
+                    picksOpts = this.picksOpts,
+                    contentW = this.$content.width(),
+                    contentH = this.$content.height(),
+                    boardW = this.$board.width(),
+                    boardH = this.$board.height(),
+                    top = Math.round(Math.random() * (contentH - picksOpts.height - boardH) + boardH),
+                    left = Math.round(Math.random() * (contentW - picksOpts.width));
+                $picks.css({
+                    top: top + 'px',
+                    left: left + 'px',
+                    width: picksOpts.width + 'px',
+                    height: picksOpts.height + 'px'
+                });
+                $picks.addClass('picks-level-' + level);
+                this.total++;
+                return $picks;
+            },
+            _addPicks: function (level) {
+                var $content = this.$content;
+                this.$content.find('.picks').remove();
+                if (this.gameover) {
+                    return;
+                }
+                $content.removeClass('hit').append(this._createPicks(level));
+            },
+            _changeLevel: function () {
+                var me = this;
+                me.level++;
+                clearInterval(me.interval);
+                me.interval = setInterval(function () {
+                    me._addPicks(me.level);
+                }, me.intervalTime[me.level]);
+            },
+            _gameStart: function () {
+                var me = this;
+                me.timer = setInterval(function () {
+                    me.$time.text(me.time.toFixed(2));
+                    me.time += 0.01;
+                    if ((me.total > 3 && me.level < 1) || (me.total > 7 && me.level < 2) || (me.total > 15 && me.level < 3)) {
+                        me._changeLevel();
+                    }
+                    if (me.total > 30) {
+                        me._gameOver();
+                    }
+                }, 10);
+                me.interval = setInterval(function () {
+                    me._addPicks(me.level);
+                }, me.intervalTime[me.level]);
+            },
+            _gameOver: function () {
+                var me = this;
+                clearInterval(me.interval);
+                clearInterval(me.timer);
+                me.gameover = true;
+                setTimeout(function () {
+                    $startBtn.show().text('重新开始');
+                }, 1000);
+            },
+            _events: function () {
+                var me = this;
+                me.$content.on('tap', '.picks:not(.die)', function () {
+                    var $this = $(this);
+                    me.score++;
+                    $this.addClass('die');
+                    me.$content.addClass('hit');
+                    me.$score.text(me.score);
+                });
+            },
+            _reset: function () {
+                this.$content.find('.picks').remove();
+                this.gameover = false;
+                this.total = 0;
+                this.time = 0;
+                this.level = 0;
+                this.score = 0;
+                this.timer = null;
+                this.interval = null;
+            }
+        };
+
+        var $picksCanvas = $('#picks_canvas'),
+            $board = $('#board'),
+            $time = $('.time span'),
+            $score = $('.score span'),
+            $startBtn = $('.start-btn'),
+            picks = new Picks({
+                content: $picksCanvas,
+                board: $board,
+                time: $time,
+                score: $score
+            });
+
+        $startBtn.on('touchstart', function () {
+            $(this).hide();
+            picks.init();
+        });
+
+    </script>
+</body>
+</html>
