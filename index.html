@@ -194,9 +194,14 @@
             _changeLevel: function () {
                 var me = this;
                 me.level++;
+                me._addPicks(me.level);
                 clearInterval(me.interval);
                 me.interval = setInterval(function () {
-                    me._addPicks(me.level);
+                    if ((me.time <= 17 && me.level < 1) || (me.time <= 12 && me.level < 2) || (me.time <= 8 && me.level < 3)) {
+                        me._changeLevel();
+                    } else {
+                        me._addPicks(me.level);
+                    }
                 }, me.intervalTime[me.level]);
             },
             _gameStart: function () {
@@ -214,8 +219,9 @@
                 me.interval = setInterval(function () {
                     if ((me.time <= 17 && me.level < 1) || (me.time <= 12 && me.level < 2) || (me.time <= 8 && me.level < 3)) {
                         me._changeLevel();
+                    } else {
+                        me._addPicks(me.level);
                     }
-                    me._addPicks(me.level);
                 }, me.intervalTime[me.level]);
             },
             _gameOver: function () {
