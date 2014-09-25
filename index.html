@@ -22,6 +22,7 @@
             z-index: 10;
             border: 1px solid #C4C4C4;
             background: white;
+            width: 200px;
             padding: 10px;
             margin: 5px;
             border-radius: 5px;
@@ -77,7 +78,7 @@
             -webkit-animation: hit 0.6s 0.2s ease both;
         }
         .die {
-            -webkit-animation: die 1s 0s ease both;
+            //-webkit-animation: die 1s 0s ease both;
         }
         @-webkit-keyframes bounceOut {
             0% {
@@ -143,8 +144,8 @@
             this.$time = opts.time;
             this.$score = opts.score;
             this.picksOpts = {
-                width: 50,
-                height: 50
+                width: 60,
+                height: 60
             };
             this.intervalTime = [1000, 800, 600, 500];
             this.evaluation = ['弱爆了！', '一般般呀', '屌炸天！'];
@@ -161,9 +162,11 @@
         Picks.prototype = {
             constructor: Picks,
             init: function () {
+                this._events();
+            },
+            start: function () {
                 this._reset();
                 this._addPicks(this.level);
-                this._events();
                 this._gameStart();
             },
             _createPicks: function (level) {
@@ -186,6 +189,7 @@
                 return $picks;
             },
             _addPicks: function (level) {
+                this.$content.find('.picks').remove();
                 if (this.gameover) {
                     return;
                 }
@@ -210,7 +214,7 @@
                 me.timer = setInterval(function () {
                     me.time = (20 - (Date.now() - me.startTime)/1000).toFixed(2);
                     if (me.time <= 0) { 
-                        me.$time.text(0);
+                        me.$time.text('0.00');
                         me._gameOver();
                     } else {
                         me.$time.text(me.time);
@@ -230,6 +234,7 @@
                 clearInterval(me.timer);
                 me.gameover = true;
                 setTimeout(function () {
+                    me.$content.find('.picks').remove();
                     $startBtn.show().text('重新开始');
                 }, 1000);
             },
@@ -237,7 +242,7 @@
                 var me = this;
                 me.$content.on('touchstart', '.picks:not(.die)', function () {
                     var $this = $(this),
-                        $picks = $('<img src="picks.png" class="picks die"></div>');
+                        $picks = $('<img src="picks2.png" class="picks die"></div>');
                     me.score++;
                     $this.remove();
                     $picks.css({
@@ -252,7 +257,6 @@
                 });
             },
             _reset: function () {
-                this.$content.find('.picks').remove();
                 this.$score.text(0);
                 this.gameover = false;
                 this.total = 0;
@@ -275,10 +279,10 @@
                 time: $time,
                 score: $score
             });
-
+        picks.init();
         $startBtn.on('click', function () {
             $(this).hide();
-            picks.init();
+            picks.start();
         });
 
     </script>
