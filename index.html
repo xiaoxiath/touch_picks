@@ -8,6 +8,7 @@
         html, body {
             height: 100%;
             margin: 0;
+            background: black;
         }
         #picks_canvas {
             position: relative;
@@ -20,6 +21,7 @@
             left: 0;
             z-index: 10;
             border: 1px solid #C4C4C4;
+            background: white;
             padding: 10px;
             margin: 5px;
             border-radius: 5px;
@@ -74,6 +76,9 @@
             font-weight: bold;
             -webkit-animation: hit 0.6s 0.2s ease both;
         }
+        .die {
+            -webkit-animation: die 1s 0s ease both;
+        }
         @-webkit-keyframes bounceOut {
             0% {
                 -webkit-transform: scale(1)
@@ -108,11 +113,23 @@
                 top: -40px; 
             }
         }
+        @-webkit-keyframes die {
+            0% {
+                opacity: 1;
+                -webkit-transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                top: 0;
+                left: 0;
+                -webkit-transform: scale(0);
+            }
+        }
     </style>
 </head>
 <body>
     <div id="board">
-        <div class="time label">计时：<span>0.00</span>秒</div>
+        <div class="time label">计时：<span>20.00</span>秒</div>
         <div class="score label">得分：<span>0</span>分</div>
     </div>
     <div id="picks_canvas">
@@ -133,11 +150,12 @@
             this.evaluation = ['弱爆了！', '一般般呀', '屌炸天！'];
             this.gameover = false;
             this.total = 0;
-            this.time = 0;
+            this.time = 20;
             this.level = 0;
             this.score = 0;
             this.timer = null;
             this.interval = null;
+            this.startTime = null;
         };
 
         Picks.prototype = {
@@ -168,7 +186,6 @@
                 return $picks;
             },
             _addPicks: function (level) {
-                this.$content.find('.picks').remove();
                 if (this.gameover) {
                     return;
                 }
@@ -178,23 +195,26 @@
                 var me = this;
                 me.level++;
                 clearInterval(me.interval);
+                me._addPicks(me.level);
                 me.interval = setInterval(function () {
                     me._addPicks(me.level);
                 }, me.intervalTime[me.level]);
             },
             _gameStart: function () {
                 var me = this;
+                me.startTime = Date.now();
                 me.timer = setInterval(function () {
-                    me.$time.text(me.time.toFixed(2));
-                    me.time += 0.01;
-                    if ((me.total > 5 && me.level < 1) || (me.total > 15 && me.level < 2) || (me.total > 20 && me.level < 3)) {
-                        me._changeLevel();
-                    }
-                    if (me.total > 40) {
+                    me.time = (20 - (Date.now() - me.startTime)/1000).toFixed(2);
+                    me.$time.text(me.time);
+                    if (me.time <= 0) {
+                        me.time = 0;
                         me._gameOver();
                     }
                 }, 10);
                 me.interval = setInterval(function () {
+                    if ((me.time <= 17 && me.level < 1) || (me.time <= 12 && me.level < 2) || (me.time <= 8 && me.level < 3)) {
+                        me._changeLevel();
+                    }
                     me._addPicks(me.level);
                 }, me.intervalTime[me.level]);
             },
@@ -210,9 +230,17 @@
             _events: function () {
                 var me = this;
                 me.$content.on('touchstart', '.picks:not(.die)', function () {
-                    var $this = $(this);
+                    var $this = $(this),
+                        $picks = $('<img src="picks.png" class="picks die"></div>');
                     me.score++;
-                    $this.addClass('die');
+                    $this.remove();
+                    $picks.css({
+                        top: $this.css('top'),
+                        left: $this.css('left'),
+                        width: $this.css('width'),
+                        height: $this.css('height')
+                    });
+                    me.$content.append($picks);
                     me.$score.parent().append('<em class="hit">+1</em>');
                     me.$score.text(me.score);
                 });
@@ -222,7 +250,7 @@
                 this.$score.text(0);
                 this.gameover = false;
                 this.total = 0;
-                this.time = 0;
+                this.time = 20;
                 this.level = 0;
                 this.score = 0;
                 this.timer = null;
