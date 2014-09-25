@@ -8,7 +8,6 @@
         html, body {
             height: 100%;
             margin: 0;
-            background: black;
         }
         #picks_canvas {
             position: relative;
@@ -31,6 +30,7 @@
             position: absolute;
         }
         .start-btn {
+            display: none;
             position: absolute;
             top: 70%;
             left: 5%;
@@ -43,6 +43,12 @@
             background-color: rgb(3, 185, 255);
             color: white;
             text-decoration: none;
+        }
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-left: -16px;
         }
         .time {
             margin-bottom: 10px;
@@ -134,6 +140,7 @@
         <div class="score label">得分：<span>0</span>分</div>
     </div>
     <div id="picks_canvas">
+        <img src="loading.gif" class="loading">
         <a href="#" class="start-btn">开始游戏</a>
     </div>
     <script src="js/zepto.min.js"></script>
@@ -143,6 +150,8 @@
             this.$board = opts.board;
             this.$time = opts.time;
             this.$score = opts.score;
+            this.$startBtn = opts.startBtn;
+            this.$loading = opts.loading;
             this.picksOpts = {
                 width: 60,
                 height: 60
@@ -162,7 +171,27 @@
         Picks.prototype = {
             constructor: Picks,
             init: function () {
-                this._events();
+                var me = this;
+                me._events();
+                var img1 = new Image(),
+                    img2 = new Image(),
+                    flag = [],
+                    loaded = function () {
+                        if (flag.length) {
+                            me.$startBtn.show();
+                            me.$loading.hide();
+                        } else {
+                            flag.push(1);
+                        }
+                    };
+                img1.src = 'picks.png';
+                img2.src = 'picks2.png';
+                img1.onload = function () {
+                    loaded();
+                };
+                img2.onload = function () {
+                    loaded();
+                };
             },
             start: function () {
                 this._reset();
@@ -273,11 +302,14 @@
             $time = $('.time span'),
             $score = $('.score span'),
             $startBtn = $('.start-btn'),
+            $loading = $('.loading'),
             picks = new Picks({
                 content: $picksCanvas,
                 board: $board,
                 time: $time,
-                score: $score
+                score: $score,
+                startBtn: $startBtn,
+                loading: $loading
             });
         picks.init();
         $startBtn.on('click', function () {
