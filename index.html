@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" /> 
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" /> 
     <title>Picks</title>
     <style>
         html, body {
@@ -171,9 +171,17 @@
         Picks.prototype = {
             constructor: Picks,
             init: function () {
-                var me = this;
-                me._events();
-                var img1 = new Image(),
+                this._events();
+                this._loadImg();
+            },
+            start: function () {
+                this._reset();
+                this._addPicks(this.level);
+                this._gameStart();
+            },
+            _loadImg: function () {
+                var me = this,
+                    img1 = new Image(),
                     img2 = new Image(),
                     flag = [],
                     loaded = function () {
@@ -192,11 +200,6 @@
                 img2.onload = function () {
                     loaded();
                 };
-            },
-            start: function () {
-                this._reset();
-                this._addPicks(this.level);
-                this._gameStart();
             },
             _createPicks: function (level) {
                 var $picks = $('<img src="images/picks.png" class="picks"></div>'),
