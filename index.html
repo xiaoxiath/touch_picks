@@ -195,7 +195,6 @@
                 var me = this;
                 me.level++;
                 clearInterval(me.interval);
-                me._addPicks(me.level);
                 me.interval = setInterval(function () {
                     me._addPicks(me.level);
                 }, me.intervalTime[me.level]);
@@ -205,10 +204,11 @@
                 me.startTime = Date.now();
                 me.timer = setInterval(function () {
                     me.time = (20 - (Date.now() - me.startTime)/1000).toFixed(2);
-                    me.$time.text(me.time);
-                    if (me.time <= 0) {
-                        me.time = 0;
+                    if (me.time <= 0) { 
+                        me.$time.text(0);
                         me._gameOver();
+                    } else {
+                        me.$time.text(me.time);
                     }
                 }, 10);
                 me.interval = setInterval(function () {
