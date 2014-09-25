@@ -29,6 +29,14 @@
         .picks {
             position: absolute;
         }
+        .texts {
+            position: absolute;
+            font-style: 30px;
+            text-align: center;
+            font-weight: bold;
+            color: red;
+            -webkit-animation: texts 2s 0.5s ease both;
+        }
         .start-btn {
             display: none;
             position: absolute;
@@ -120,7 +128,7 @@
                 top: -40px; 
             }
         }
-        @-webkit-keyframes die {
+        @-webkit-keyframes texts {
             0% {
                 opacity: 1;
                 -webkit-transform: scale(1);
@@ -128,7 +136,6 @@
             100% {
                 opacity: 0;
                 top: 0;
-                left: 0;
                 -webkit-transform: scale(0);
             }
         }
@@ -158,6 +165,7 @@
             };
             this.intervalTime = [1000, 800, 600, 500];
             this.evaluation = ['弱爆了！', '一般般呀', '屌炸天！'];
+            this.text = ['啊！', 'OTZ', '咦？', '(⌒▽⌒)', '←_←', '→_→', '(<_<)', '(>_>)', '(;¬_¬)', '("▔□▔)/', '打我呀!', '跪了..'];
             this.gameover = false;
             this.total = 0;
             this.time = 20;
@@ -220,6 +228,10 @@
                 this.total++;
                 return $picks;
             },
+            _createText: function () {
+                var $text = $('<div class="texts">' + this.text[Math.round(Math.random() * (this.text.length - 1))] + '</div>');
+                return $text;
+            },
             _addPicks: function (level) {
                 this.$content.find('.picks').remove();
                 if (this.gameover) {
@@ -277,19 +289,27 @@
                         $picks = $('<img src="images/picks2.png" class="picks die"></div>');
                     me.score++;
                     $this.remove();
+                    $text = me._createText();
                     $picks.css({
                         top: $this.css('top'),
                         left: $this.css('left'),
                         width: $this.css('width'),
                         height: $this.css('height')
                     });
+                    $text.css({
+                        top: (parseInt($this.css('top')) - 20) + 'px',
+                        left: $this.css('left'),
+                        width: $this.css('width')
+                    })
                     me.$content.append($picks);
+                    me.$content.append($text);
                     me.$score.parent().append('<em class="hit">+1</em>');
                     me.$score.text(me.score);
                 });
             },
             _reset: function () {
                 this.$score.text(0);
+                this.$content.find('.texts').remove();
                 this.gameover = false;
                 this.total = 0;
                 this.time = 20;
