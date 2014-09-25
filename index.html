@@ -140,7 +140,7 @@
         <div class="score label">得分：<span>0</span>分</div>
     </div>
     <div id="picks_canvas">
-        <img src="loading.gif" class="loading">
+        <img src="images/loading.gif" class="loading">
         <a href="#" class="start-btn">开始游戏</a>
     </div>
     <script src="js/zepto.min.js"></script>
@@ -184,8 +184,8 @@
                             flag.push(1);
                         }
                     };
-                img1.src = 'picks.png';
-                img2.src = 'picks2.png';
+                img1.src = 'images/picks.png';
+                img2.src = 'images/picks2.png';
                 img1.onload = function () {
                     loaded();
                 };
@@ -199,7 +199,7 @@
                 this._gameStart();
             },
             _createPicks: function (level) {
-                var $picks = $('<img src="picks.png" class="picks"></div>'),
+                var $picks = $('<img src="images/picks.png" class="picks"></div>'),
                     picksOpts = this.picksOpts,
                     contentW = this.$content.width(),
                     contentH = this.$content.height(),
@@ -271,7 +271,7 @@
                 var me = this;
                 me.$content.on('touchstart', '.picks:not(.die)', function () {
                     var $this = $(this),
-                        $picks = $('<img src="picks2.png" class="picks die"></div>');
+                        $picks = $('<img src="images/picks2.png" class="picks die"></div>');
                     me.score++;
                     $this.remove();
                     $picks.css({
