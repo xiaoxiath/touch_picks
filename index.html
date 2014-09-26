@@ -183,7 +183,7 @@
                 this._events();
                 this._loadImg();
             },
-            start: function () {
+            _start: function () {
                 this._reset();
                 this._addPicks(this.level);
                 this._gameStart();
@@ -310,6 +310,11 @@
                     me.$score.parent().append('<em class="hit">+1</em>');
                     me.$score.text(me.score);
                 });
+
+                me.$startBtn.on('click', function () {
+                    $(this).hide();
+                    me._start();
+                });
             },
             _reset: function () {
                 this.$score.text(0);
@@ -338,12 +343,9 @@
                 startBtn: $startBtn,
                 loading: $loading
             });
-        picks.init();
-        $startBtn.on('click', function () {
-            $(this).hide();
-            picks.start();
-        });
 
+        picks.init();
+        
     </script>
 </body>
 </html>
