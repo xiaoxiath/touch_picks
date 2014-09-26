@@ -76,13 +76,13 @@
             -webkit-animation: bounceOut 1s 0 ease both;
         }
         .picks-level-1 {
-            -webkit-animation: bounceOut 0.8s 0 ease both;
+            -webkit-animation: bounceOut 0.9s 0 ease both;
         }
         .picks-level-2 {
-            -webkit-animation: bounceOut 0.6s 0 ease both;
+            -webkit-animation: bounceOut 0.7s 0 ease both;
         }
         .picks-level-3 {
-            -webkit-animation: bounceOut 0.5s 0 ease both;
+            -webkit-animation: bounceOut 0.6s 0 ease both;
         }
         .score .hit {
             position: absolute;
@@ -164,7 +164,7 @@
                 width: 60,
                 height: 60
             };
-            this.intervalTime = [1000, 800, 600, 500];
+            this.intervalTime = [1000, 900, 700, 600];
             this.evaluation = ['弱爆了！', '一般般呀', '屌炸天！'];
             this.text = ['啊！', 'OTZ', '咦？', '(⌒▽⌒)', '←_←', '→_→', '(<_<)', '(>_>)', '(;¬_¬)', '("▔□▔)/', '打我呀!', '跪了..'];
             this.gameover = false;
@@ -286,7 +286,7 @@
             },
             _events: function () {
                 var me = this;
-                me.$content.on('touchstart', '.picks:not(.die)', function () {
+                me.$content.on('touchstart, click', '.picks:not(.die)', function () {
                     var $this = $(this),
                         $picks = $('<div class="picks die"></div>');
                     me.score++;
@@ -327,9 +327,9 @@
         var $picksCanvas = $('#picks_canvas'),
             $board = $('#board'),
             $time = $('.time span'),
+            $loading = $('.loading'),
             $score = $('.score span'),
             $startBtn = $('.start-btn'),
-            $loading = $('.loading'),
             picks = new Picks({
                 content: $picksCanvas,
                 board: $board,
