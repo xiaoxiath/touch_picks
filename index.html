@@ -28,6 +28,7 @@
         }
         .picks {
             position: absolute;
+            background-image: url('images/picks.png');
         }
         .texts {
             position: absolute;
@@ -210,7 +211,7 @@
                 };
             },
             _createPicks: function (level) {
-                var $picks = $('<img src="images/picks.png" class="picks"></div>'),
+                var $picks = $('<div class="picks"></div>'),
                     picksOpts = this.picksOpts,
                     contentW = this.$content.width(),
                     contentH = this.$content.height(),
@@ -222,7 +223,8 @@
                     top: top + 'px',
                     left: left + 'px',
                     width: picksOpts.width + 'px',
-                    height: picksOpts.height + 'px'
+                    height: picksOpts.height + 'px',
+                    'background-size': picksOpts.width + 'px'
                 });
                 $picks.addClass('picks-level-' + level);
                 this.total++;
@@ -286,7 +288,7 @@
                 var me = this;
                 me.$content.on('touchstart', '.picks:not(.die)', function () {
                     var $this = $(this),
-                        $picks = $('<img src="images/picks2.png" class="picks die"></div>');
+                        $picks = $('<div class="picks die"></div>');
                     me.score++;
                     $this.remove();
                     $text = me._createText();
@@ -294,7 +296,9 @@
                         top: $this.css('top'),
                         left: $this.css('left'),
                         width: $this.css('width'),
-                        height: $this.css('height')
+                        height: $this.css('height'),
+                        'background-size': $this.css('width'),
+                        'background-image': 'url("images/picks2.png")'
                     });
                     $text.css({
                         top: (parseInt($this.css('top')) - 20) + 'px',
